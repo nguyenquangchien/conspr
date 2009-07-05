@@ -3,11 +3,11 @@
 
 = Introduction =
 
-As a beginner, you might want to study the phenomena of contaminant spreading in [natural water bodies]. While there are several methods of approaches (field observation, lab work), one of the most popular method is to use a numerical model.
+As a beginner, you might want to study the phenomena of contaminant spreading in [natural_water_body natural water bodies]. While there are several methods of approaches (field observation, lab work), one of the most popular method is to use a numerical model.
 
 
 = Structure =
-In conspr, the natural water body is divided into non-overlapping [control volumes].
+In conspr, the natural water body is divided into non-overlapping [control_volume control volumes].
 
 
 = Implementation =
