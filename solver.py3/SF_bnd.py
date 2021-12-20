@@ -7,7 +7,7 @@ def to_sec(hourmin):
     return (hourmin // 100) * 3600 + (hourmin % 100) * 60
 
 
-# Note: Water levels in Feet above MLLW
+# ATTN: water level in Feet above MLLW
 ts1 = [(-51, 7.3), (622, -1.8), (1340, 5.0), (1757, 2.8), (2400, 7.4)]
 ts1 = [(to_sec(datapt[0]), datapt[1] * 0.3048) for datapt in ts1]
 ts2 = [(-32, 9.4), (700, -1.9), (1359, 6.4), (1835, 2.9), (2419, 9.5)]  # San Mateo
@@ -27,7 +27,7 @@ def init(par, dom):
     print(slope)
     dom.zs = zsRiv + dom.y * slope
     dom.zs = numpy.maximum(dom.zs, dom.zb + par.hmin)
-    dom.uu.fill(0)  # still-water
+    dom.uu.fill(0)  # still water
     dom.vv.fill(0)
 
 
