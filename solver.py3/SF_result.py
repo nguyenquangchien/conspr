@@ -1,5 +1,4 @@
-# SF_result.py
-# Show the result from SF bay simulation
+"""Shows the results of the San Francisco bay simulation."""
 
 def getResult(par, dom):
     locations = [("Mateo Bridge", 75, 76), 
