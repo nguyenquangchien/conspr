@@ -14,6 +14,7 @@ License GNU GPL, http://www.gnu.org/copyleft/gpl.html """
 import numpy as np
 from copy import deepcopy
 
+
 class Param(object):
     """ Parameters related to the flow """
     def __init__(self):
@@ -43,6 +44,7 @@ class Param(object):
 
 
 class Domain(object):
+    """ Computational domain """
     def __init__(self, flowpar, type='river', ext=None):
         self.makeBathy(flowpar, type, 4, 0.01, 0.5)
         
@@ -204,8 +206,8 @@ class Domain(object):
         usu[:, 0] = usu[:, 1]
         usu[:, -1] = usu[:, -2]
         
-        veu = vu - vsu                  # V-euler velocities @ u-point
-        ueu = uu - usu                  # U-euler velocties @ u-point
+        veu = vu - vsu                  # V-euler velocities at u-point
+        ueu = uu - usu                  # U-euler velocties at u-point
         vmagu = np.sqrt(uu**2 + vu**2)  # velocity magnitude
         vmageu = np.sqrt(ueu**2 + veu**2)    # Eulerian velocity magnitude
 
@@ -310,15 +312,15 @@ class Domain(object):
                                      - Fy[wetv] / rho / hv[wetv] )
         vv[not wetv] = 0
         
-        qy = vv * hv    # flux @ v-points
+        qy = vv * hv    # flux at v-points
         
-        #  U and V @ cell centre
+        #  U and V at cell centre
         u[1:-1, :] = 0.5 * (uu[:-2, :] + uu[1:-1, :])
         u[0, :] = uu[0, :]
         v[:, 1:-1] = 0.5 * (vv[:, :-2] + vv[:, 1:-1])
         v[:, 0] = vv[:, 0]
         
-        # Ue and Ve @ cell centre
+        # Ue and Ve at cell centre
         ue[1:-1, :] = 0.5 * (ueu[:-2, :] + ueu[1:-1,:])
         ue[0, :] = ueu[0, :]
         ve[:, 1:-1] = 0.5 * (vev[:, :-2] + vev[:, 1:-1])
@@ -332,7 +334,7 @@ class Domain(object):
         
         # Transport of contaminants
         k = flowpar.k
-        # @ boundaries
+        # at boundaries
         c[0, :] = c[1, :]
         c[-1, :] = c[-2, :]
         c[:, 0] = c[:, 1]
@@ -342,7 +344,7 @@ class Domain(object):
         f1.fill(0)
         f2.fill(0)
         f1[:-1, :] = c[:-1, :]
-        f2[:-1, :] = c[1:, :]   # water depth @ u-points
+        f2[:-1, :] = c[1:, :]   # water depth at u-points
         cu = mx1 * f1 + mx2 * f2
         Su = cu * hu * uu
         Ecx[1:-1, :] = Etran * ( 

@@ -7,31 +7,47 @@ def to_sec(hourmin):
     return (hourmin // 100) * 3600 + (hourmin % 100) * 60
 
 
-# ATTN: water level in Feet above MLLW
-ts1 = [(-51, 7.3), (622, -1.8), (1340, 5.0), (1757, 2.8), (2400, 7.4)]
-ts1 = [(to_sec(datapt[0]), datapt[1] * 0.3048) for datapt in ts1]
-ts2 = [(-32, 9.4), (700, -1.9), (1359, 6.4), (1835, 2.9), (2419, 9.5)]  # San Mateo
-ts2 = [(to_sec(datapt[0]), datapt[1] * 0.3048) for datapt in ts2]
-ts3 = [(-26, 10.4), (704, -1.9), (1405, 7.1), (1839, 2.9), (2425, 10.6)]  # Dumbarton Bridge
-ts3 = [(to_sec(datapt[0]), datapt[1] * 0.3048) for datapt in ts3]
+def data_input():
+    """ Reads in the time series observed for the San Francisco case. """
+    # NOTE: water level in Feet above MLLW
+    raw_ts1 = [(-51, 7.3), (622, -1.8), (1340, 5.0), (1757, 2.8), (2400, 7.4)]
+    raw_ts2 = [(-32, 9.4), (700, -1.9), (1359, 6.4), (1835, 2.9), (2419, 9.5)]  # San Mateo
+    raw_ts3 = [(-26, 10.4), (704, -1.9), (1405, 7.1), (1839, 2.9), (2425, 10.6)]  # Dumbarton Bridge
+    FEET_TO_M = 0.3048
+    ts1 = [(to_sec(datapt[0]), datapt[1] * FEET_TO_M) for datapt in raw_ts1]
+    ts2 = [(to_sec(datapt[0]), datapt[1] * FEET_TO_M) for datapt in raw_ts2]
+    ts3 = [(to_sec(datapt[0]), datapt[1] * FEET_TO_M) for datapt in raw_ts3]
+    return ts1, ts2, ts3
 
 
 def init(par, dom):
+    """ Initialisation: sets the basic parameters for the model. """
     par.Elong = 20
     par.Etran = 20
     par.hmin = 0.005
     # set up a linear water slope
+    ts1, ts2, ts3 = data_input()
     zsSea = interp(ts1, par.t)
     zsRiv = interp(ts3, par.t) 
     slope = (zsSea - zsRiv) / float(dom.y[-1,0] - dom.y[0,0])
     print(slope)
     dom.zs = zsRiv + dom.y * slope
     dom.zs = numpy.maximum(dom.zs, dom.zb + par.hmin)
-    dom.uu.fill(0)  # still water
+    dom.uu.fill(0)  # still-water
     dom.vv.fill(0)
 
 
 def interp(dataXY, xp):
+    """ Interpolates the data to the given data points.
+        Parameters
+        ----------
+        dataXY: list of (x,y) pairs/tuples
+        xp: x value to be interpolated
+
+        Returns
+        -------
+        yp: y value corresponding to xp
+    """
     xList, yList = list(zip(*dataXY)[0]), list(zip(*dataXY)[1])
     if xp < xList[0]:
         return yList[0]
@@ -46,7 +62,8 @@ def interp(dataXY, xp):
 
 def applyBC(par, dom):
     t = par.t
-    
+    ts1, ts2, ts3 = data_input()
+
     # North boundary - Yerba Buena Island (29d)
     vts1 = [ (-30, 0), (213, -1.1), (543, 0), (1051, 1.3),
             (1353, 0), (1545, -0.5), (1758, 0), (2137, 1.0),
